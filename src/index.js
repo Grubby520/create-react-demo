@@ -508,7 +508,307 @@ class Calculator extends React.Component {
   }
 }
 
+// ReactDOM.render(
+//   <Calculator />,
+//   $root
+// )
+
+
+//  11. 组合 & 继承 ------------------------------
+// \children\ 特殊的prop 类比v-slot=’slotName‘
+function FancyBorder(props) {
+  return (
+    <div className="container">
+      <p>我是FancyBorder函数组件</p>
+      <div className={'FancyBorder FancyBorder-' + props.color}>
+        <p>下面是插入的 children prop的slot组件：</p>
+        {props.children}
+      </div>
+    </div>
+  )
+}
+
+function WelcomeDialog() {
+  return (
+    <FancyBorder color="blue">
+      <h1 className="Dialog-title">
+        Welcome
+      </h1>
+      <p className="Dialog-message">
+        Thank you for visiting our spacecraft!
+      </p>
+    </FancyBorder>
+  )
+}
+
+// 类比具名插槽 指定prop的slotName
+// 放在内容里面，插入后会用一个div包裹起来
+function SplitPane(props) {
+  return (
+    <div className="SplitPane">
+      <div className="SplitPane-left">
+        {props.left}
+      </div>
+      <div className="SplitPane-right">
+        {props.right}
+      </div>
+    </div>
+  );
+}
+
+function Contacts() {
+  return (
+    <p>i am Contacts</p>
+  )
+}
+
+function Chat() {
+  return (
+    <p>i am Chat</p>
+  )
+}
+// 放在组件的属性上 作为props插入一个子组件
+function MainPane() {
+  return (
+    <SplitPane 
+      left = {
+        <Contacts />
+      }
+      right = {
+        <Chat />
+      }
+    >
+    </SplitPane>
+  )
+}
+
+// ReactDOM.render(
+//   <WelcomeDialog />,
+//   $root
+// )
+
+// ReactDOM.render(
+//   <MainPane />,
+//   $root
+// )
+
+function Dialog(props) {
+  return (
+    <FancyBorder color="blue">
+      <h1 className="Dialog-title">
+        {props.title}
+      </h1>
+      <p className="Dialog-message">
+        {props.message}
+      </p>
+      {props.children}
+    </FancyBorder>
+  );
+}
+// 适用class，插入内容的state还是在定义的父组件中维护
+// 灵活得有点可怕，这层层嵌套之后
+class SignUpDialog extends React.Component {
+  constructor(props) {
+    super(props);
+    this.handleChange = this.handleChange.bind(this);
+    this.handleSignUp = this.handleSignUp.bind(this);
+    this.state = {login: ''};
+  }
+
+  render() {
+    return (
+      <Dialog title="Mars Exploration Program"
+              message="How should we refer to you?">
+        <input value={this.state.login}
+               onChange={this.handleChange} />
+        <button onClick={this.handleSignUp}>
+          Sign Me Up!
+        </button>
+      </Dialog>
+    );
+  }
+
+  handleChange(e) {
+    this.setState({login: e.target.value});
+  }
+
+  handleSignUp() {
+    console.log(`Welcome aboard, ${this.state.login}!`);
+  }
+}
+
+// ReactDOM.render(
+//   <SignUpDialog />,
+//   $root
+// )
+
+// 12. 完整的demo，组件拆分哲学 ---------------------
+
+class FilterableProductTable extends React.Component {
+  constructor(props) {
+    super(props)
+    // wtf: 所有数据都该在state一个容器里? 每次都解构?
+    this.state = {
+      name: '',
+      stocked: false,
+      sportingGoods: [],
+      electronicsGoods: []
+    }
+    this.handleQuerySearch = this.handleQuerySearch.bind(this)
+  }
+
+  componentDidMount() {
+    this.handleQuerySearch()
+  }
+
+  handleQuerySearch(key, value) {
+    this.setState({ [key]: value })
+    this.APIGetTableData()
+      .then(res => {
+        const { sportingGoods = [], electronicsGoods = [] } = this.filterTableData(res)
+        this.setState({
+          sportingGoods,
+          electronicsGoods
+        })
+      })
+  }
+
+  filterTableData(res) {
+    let { sportingGoods = [], electronicsGoods = [] } = res
+    sportingGoods = sportingGoods.filter(good => (this.state.stocked ? good.stocked : true) && (good.name.indexOf(this.state.name) !== -1))
+    electronicsGoods = electronicsGoods.filter(good => (this.state.stocked ? good.stocked : true) && (good.name.indexOf(this.state.name) !== -1))
+    return {
+      sportingGoods,
+      electronicsGoods
+    }
+  }
+
+  APIGetTableData() {
+    return new Promise(resolve => {
+      setTimeout(() => {
+        resolve({
+          sportingGoods: [
+            {category: "Sporting Goods", price: "$49.99", stocked: true, name: "Football"},
+            {category: "Sporting Goods", price: "$9.99", stocked: true, name: "Baseball"},
+            {category: "Sporting Goods", price: "$29.99", stocked: false, name: "Basketball"}
+          ],
+          electronicsGoods: [
+            {category: "Electronics", price: "$99.99", stocked: true, name: "iPod Touch"},
+            {category: "Electronics", price: "$399.99", stocked: false, name: "iPhone 5"},
+            {category: "Electronics", price: "$199.99", stocked: true, name: "Nexus 7"}
+          ]
+        })
+      }, 300)
+    })
+  }
+
+  render() {
+    const { name, sportingGoods, electronicsGoods } = this.state
+    return (
+      <div class="product-container">
+        <SearchBar name={name} onTemperatureChange={this.handleQuerySearch} />
+        <p>{name}</p>
+        <ProductTable sportingGoods={sportingGoods} electronicsGoods={electronicsGoods} />
+      </div>
+    )
+  }
+}
+
+class SearchBar extends React.Component {
+  handleChange(key, ev) {
+    console.log(ev)
+    console.log(key)
+    const value = key === 'name' ? ev.target.value : ev.target.checked
+    this.props.onTemperatureChange(key, value)
+  }
+
+  render() {
+    const { name, stocked } = this.props
+    return (
+      <div class="search-bar">
+        <div class="item-content">
+          <input type="text" value={name} onChange={this.handleChange.bind(this, 'name')}></input>
+        </div>
+        <div class="item-content">
+          <input type="checkbox" value={stocked} onChange={this.handleChange.bind(this, 'stocked')}></input>
+          Only show products in stocked
+        </div>
+      </div>
+    )
+  }
+}
+
+class ProductTable extends React.Component {
+  render() {
+    const { sportingGoods, electronicsGoods } = this.props
+    return (
+      <div class="product-table">
+        <div class="sporting-table">
+          <ProductCategoryRow sportingGoods={sportingGoods} />
+        </div>
+        <div class="elect-table">
+          <ProductRow electronicsGoods={electronicsGoods} />
+        </div>
+      </div>
+    )
+  }
+}
+
+class ProductCategoryRow extends React.Component {
+  render() {
+    const { sportingGoods = [] } = this.props
+    const list = sportingGoods.map(good => (
+      <tr key={good.name}>
+        <td>{good.name}</td>
+        <td>{good.price}</td>
+      </tr>
+    ))
+    return (
+      <table>
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Price</th>
+          </tr>
+        </thead>
+        <tbody>
+          { list }
+        </tbody>
+      </table>
+    )
+  }
+}
+
+class ProductRow extends React.Component {
+  // constructor(props) {
+  //   super(props)
+  // }
+
+  render() {
+    const { electronicsGoods = [] } = this.props
+    const list = electronicsGoods.map(good => (
+      <tr key={good.name}>
+        <td>{good.name}</td>
+        <td>{good.price}</td>
+      </tr>
+    ))
+    return (
+      <table>
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Price</th>
+          </tr>
+        </thead>
+        <tbody>
+          { list }
+        </tbody>
+      </table>
+    )
+  }
+}
+
 ReactDOM.render(
-  <Calculator />,
+  <FilterableProductTable />,
   $root
 )
