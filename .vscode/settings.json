@@ -1,0 +1,9 @@
+{
+    "editor.fontSize": 14,
+    "emmet.triggerExpansionOnTab": true,
+    "emmet.includeLanguages": {
+        "wxml": "html",
+        "javascript": "javascriptreact"
+    },
+    "editor.tabSize": 2
+}
