@@ -1,6 +1,6 @@
 import React from 'react'
 
-// before
+// --before--
 // function Toolbar(props) {
 // 	return (
 // 		<div>
@@ -46,20 +46,20 @@ import React from 'react'
 
 // export default App
 
-// after
+// --after--
 import { ThemeContext } from '../context/theme-context'
 
 class ThemedButton extends React.Component {
 	render() {
-		// const props = this.props
-		const theme = this.context
-		console.log(theme)
+		// wtf: 为啥Toolbar中的ThemedButton重绘，会打印2次? 难道不是独立的实例?
+		console.log(this.context)
+		const { background, color, name } = this.context.theme
 		return (
-			<button
-				{...this.props}
-				// 双大括号? {{}}
-				style={{backgroundColor: theme.background}}
-			>{theme.name}</button>
+			<div>
+				<button {...this.props}  style={{backgroundColor: background, color }}>
+					{name}
+				</button>
+			</div>
 		)
 	}
 }

@@ -3,7 +3,7 @@ import React, { Suspense } from 'react'
 import ReactDOM from 'react-dom'
 
 import { BasicExample } from './components/basicExample'
-import App from './components/context'
+import App from './components/app'
 
 const $root = document.getElementById('root')
 
