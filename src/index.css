@@ -6,10 +6,17 @@ p {
 .color-red {
     color: red;
 }
+.color-blue {
+    color: blue;
+}
 .avatar {
     max-width: 50px;
     max-height: 50%;
 }
 .FancyBorder-blue {
     color: blue;
+}
+
+table th, table td {
+    border: 1px solid #000;
 }

@@ -5,6 +5,14 @@ import ReactDOM from 'react-dom'
 import { BasicExample } from './components/basicExample'
 import App from './components/app'
 
+import AppError from './components/effect-error'
+
+import FancyButton from "./components/ref";
+
+import TableFragments from './components/fragments'
+
+import { Story } from './components/jsx'
+
 const $root = document.getElementById('root')
 
 // 1. 无障碍，这在国内有啥意义? ---------------------
@@ -169,7 +177,76 @@ class AppComponent extends React.Component {
 //   $root
 // )
 
+// ReactDOM.render(
+//   <App />,
+//   $root
+// )
+
+class ErrorTest extends React.Component {
+  componentDidMount() {
+    throw new Error('error occurred')
+  }
+
+  render() {
+    return (
+      <div>i am ErrorTest component</div>
+    )
+  }
+}
+
+// ReactDOM.render(
+//   <AppError />,
+//   $root
+// )
+
+class ParentRef extends React.Component {
+  constructor(props) {
+    super(props)
+    this.ref = React.createRef() // 创建React ref
+    this.handleClick = this.handleClick.bind(this)
+  }
+  
+  handleClick() {
+    const className = this.ref.current.className
+    this.ref.current.className = className.indexOf('red') >= 0 ? 'fancy-button color-blue' : 'fancy-button color-red'
+  }
+
+  render() {
+    return (
+      // ref 为 JSX属性，向下传递
+      <FancyButton ref={this.ref} onClick={this.handleClick}>Hei,click me</FancyButton>
+    )
+  }
+}
+
+// ReactDOM.render(
+//   <ParentRef />,
+//   $root
+// )
+
+// ReactDOM.render(
+//   <TableFragments />,
+//   $root
+// )
+
+class NewStory extends React.Component {
+  constructor(props) {
+    super(props)
+    this.state = {
+      storyType: ''
+    }
+  }
+
+  render() {
+    const { storyType } = this.state
+    return (
+      <Story storyType="storyType"></Story>
+    )
+  }
+}
+
 ReactDOM.render(
-  <App />,
+  <Story />,
   $root
 )
+
