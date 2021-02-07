@@ -42,8 +42,23 @@ const components = {
   video: VideoStory
 };
 
-export function Story(props) {
-  // 正确！JSX 类型可以是大写字母开头的变量。
-  const SpecificStory = components[props.storyType];
-  return <SpecificStory story={props.story} />;
+export const Story =  function(props) {
+  // JSX 类型可以是大写字母开头的变量
+  const SpecificStory = components[props.storyType]
+  return (
+    <SpecificStory />
+  )
+}
+
+// 属性展开
+function PropertyExpand(props) {
+  const { first, last, ...others } = props
+  return (
+    <div>
+      {/* 所有属性下传 */}
+      <PhotoStory {...props} />
+      {/* 部分下传 */}
+      <VideoStory {...others} />
+    </div>
+  )
 }

@@ -1,11 +1,15 @@
 export const PhotoStory = function () {
   return (
-    <div>PhotoStory</div>
+    <div>
+      PhotoStory
+      {'Component'}
+    </div>
   )
 }
 
 export const VideoStory = function () {
   return (
-    <div>VideoStory</div>
+    <div>VideoStory
+    Component</div>
   )
 }

@@ -13,6 +13,8 @@ import TableFragments from './components/fragments'
 
 import { Story } from './components/jsx'
 
+import { WordAdder } from './components/optimizingPerformance'
+
 const $root = document.getElementById('root')
 
 // 1. 无障碍，这在国内有啥意义? ---------------------
@@ -232,21 +234,39 @@ class ParentRef extends React.Component {
 class NewStory extends React.Component {
   constructor(props) {
     super(props)
+    this.handleChangeType = this.handleChangeType.bind(this)
     this.state = {
-      storyType: ''
+      storyType: 'photo'
     }
+  }
+
+  handleChangeType() {
+    this.setState(({ storyType }) => ({
+      storyType: storyType === 'photo' ? 'video' : 'photo'
+    }))
   }
 
   render() {
     const { storyType } = this.state
     return (
-      <Story storyType="storyType"></Story>
+      <div>
+        <button onClick={this.handleChangeType}>change storyType</button>
+        <span>{storyType}</span>
+        <Story storyType={storyType} />
+      </div>
     )
   }
 }
 
+console.log(Story)
+
+// ReactDOM.render(
+//   <NewStory />,
+//   $root
+// )
+
 ReactDOM.render(
-  <Story />,
+  <WordAdder />,
   $root
 )
 
