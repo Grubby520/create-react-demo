@@ -15,6 +15,8 @@ import { Story } from './components/jsx'
 
 import { WordAdder } from './components/optimizingPerformance'
 
+import { PortalInstall } from './components/portals'
+
 const $root = document.getElementById('root')
 
 // 1. 无障碍，这在国内有啥意义? ---------------------
@@ -265,8 +267,10 @@ console.log(Story)
 //   $root
 // )
 
-ReactDOM.render(
-  <WordAdder />,
-  $root
-)
+// ReactDOM.render(
+//   <WordAdder />,
+//   $root
+// )  `
+
+PortalInstall()
 
