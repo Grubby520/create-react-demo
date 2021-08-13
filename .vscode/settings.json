@@ -3,7 +3,8 @@
     "emmet.triggerExpansionOnTab": true,
     "emmet.includeLanguages": {
         "wxml": "html",
-        "javascript": "javascriptreact"
+        "javascript": "javascriptreact",
+        "*.js": "javascriptreact"
     },
     "editor.tabSize": 2
 }
